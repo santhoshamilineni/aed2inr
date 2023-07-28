@@ -1,0 +1,8 @@
+{
+  "name": "AED2INR",
+  "description": "Shows you current exchnage rate from 1 AED to INR, it will refresh every hour",
+  "uuid": "aed2inr@santhoshamilineni.extension",
+  "shell-version": [
+    "42"
+  ]
+}

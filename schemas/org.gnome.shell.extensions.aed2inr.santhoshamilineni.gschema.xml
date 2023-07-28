@@ -1,0 +1,14 @@
+<schemalist>
+<schema id="org.gnome.shell.extensions.aed2inr.santhoshamilineni.gschema.xml" path="/~/.local/share/gnome-shell/extensions/aed2inr@santhoshamilineni.extension/" gettext-domain="aed2inr@santhoshamilineni.extension">
+    <key name="apikey" type="s">
+      <default>""</default>
+      <summary>APIKey</summary>
+      <description>APIKey</description>
+    </key>
+    <key name="alertrate" type="d">
+      <default>0</default>
+      <summary>AlertRate</summary>
+      <description>AlertRate Setting</description>
+    </key>
+  </schema>
+</schemalist>
