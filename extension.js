@@ -35,7 +35,7 @@ var glib = imports.gi.GLib;
 
 
 const Me = ExtensionUtils.getCurrentExtension();
-const SCHEMA_NAME = 'org.gnome.shell.extensions.aed2inr.santhoshamilineni.gschema.xml';
+const SCHEMA_NAME = 'org.gnome.shell.extensions.aed2inr-santhoshamilineni.gschema.xml';
 
 // Retrieve GSettings
 let Settings = ExtensionUtils.getSettings(SCHEMA_NAME);
@@ -59,8 +59,8 @@ let APIKey;
 let APIKeyEntryBox;
 
 
-const KeyFilePath = '.local/share/gnome-shell/extensions/aed2inr@santhoshamilineni.extension/key_file.txt';
-const DataFilePath = '.local/share/gnome-shell/extensions/aed2inr@santhoshamilineni.extension/data_file.json';
+const KeyFilePath = '.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/key_file.txt';
+const DataFilePath = '.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/data_file.json';
 const HistoryScritpPath= '.local/share/gnome-shell/extensions/aed2inr@santhoshamilineni.extension/history.json';
 
 let DataJSONFile;
@@ -248,6 +248,7 @@ function readFile(filePath) {
     //return data.toString(data);
 }
 
+/*
 const cwd = process.cwd();
 let scriptPath = '.local/share/gnome-shell/extensions/Test/history.py '+cdw+'/data_file.json';
 // Global variable to store the process ID of the Python script
@@ -278,7 +279,7 @@ function runPythonScript() {
     print('Error launching Python script:'+ error.message);
   }
 }
-
+*/
 const _ = ExtensionUtils.gettext;
 const Indicator = GObject.registerClass(
     class Indicator extends PanelMenu.Button {
@@ -316,7 +317,7 @@ const Indicator = GObject.registerClass(
 
         _ShowGraph(item) {
             Main.notify(_('Settings In progress!!'));
-            runPythonScript();
+            //runPythonScript();
         };
 
         _onAlertEntryTextChanged() {
