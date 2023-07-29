@@ -287,7 +287,7 @@ const Indicator = GObject.registerClass(
             super._init(0.0, _('My Shiny Indicator'));
 
             //let icon = new St.Icon({icon_name: 'face-smile-symbolic',style_class: 'system-status-icon',});
-            CurrencyLabel = new St.Label({ text: "INR ₹" + Rate.toFixed(3) ,y_expand: true, y_align: Clutter.ActorAlign.CENTER });
+            CurrencyLabel = new St.Label({ text: "INR ₹ " + Rate.toFixed(3) ,y_expand: true, y_align: Clutter.ActorAlign.CENTER });
             TimeStampLabel = new St.Label({ text: "Last:" + TimeStamp });
             
             
@@ -316,7 +316,7 @@ const Indicator = GObject.registerClass(
         };
 
         _ShowGraph(item) {
-            Main.notify(_('Settings In progress!!'));
+            Main.notify(_('History page In progress!!'));
             //runPythonScript();
         };
 
@@ -348,7 +348,7 @@ const Indicator = GObject.registerClass(
                 getNewData();
             }
             else {
-                Main.notify("Wrong API Key Updated to " + APIKey);
+                //Main.notify("Wrong API Key Updated to " + APIKey);
             }
         }
 
