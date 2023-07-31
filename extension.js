@@ -29,6 +29,7 @@ const Lang = imports.lang;
 const Soup = imports.gi.Soup;
 const ExtensionUtils = imports.misc.extensionUtils;
 
+
 /* Import Clutter because is the library that allow you to layout UI elements */
 const Clutter = imports.gi.Clutter;
 var glib = imports.gi.GLib;
@@ -58,10 +59,12 @@ let AlertEntryBox;
 let APIKey;
 let APIKeyEntryBox;
 
+//Loop 
+let loopTimeoutId = null;
 
 const KeyFilePath = '.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/key_file.txt';
 const DataFilePath = '.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/data_file.json';
-const HistoryScritpPath= '.local/share/gnome-shell/extensions/aed2inr@santhoshamilineni.extension/history.json';
+const HistoryScriptPath= '.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/history.py';
 
 let DataJSONFile;
 let JSONDataBase;
@@ -172,8 +175,6 @@ function loopCallback() {
     return true;
 }
 
-
-
 function CheckRateAlert() {
     print("price old: "+ oldRate + " Current:"+ Rate);
     
@@ -248,38 +249,22 @@ function readFile(filePath) {
     //return data.toString(data);
 }
 
-/*
-const cwd = process.cwd();
-let scriptPath = '.local/share/gnome-shell/extensions/Test/history.py '+cdw+'/data_file.json';
+
+
 // Global variable to store the process ID of the Python script
 let pythonProcessId = null;
 
 function runPythonScript() {
-    try {
-    if (pythonProcessId === null) {
-      // Launch the Python script as a detached process
-      let [success, pid] = GLib.spawn_async(
-        null, // Working directory (null for current directory)
-        ['python3', scriptPath], // Command and arguments
-        null, // Environment variables (null for current environment)
-        GLib.SpawnFlags.SEARCH_PATH, // Spawn flags
-        null // Child setup function (null for default behavior)
-      );
-
-      if (success) {
-        pythonProcessId = pid;
-        print(`Python script started with PID: ${pid}`);
-      } else {
-        print('Error launching Python script.');
-      }
-    } else {
-      print('Python script is already running.');
-    }
-  } catch (error) {
-    print('Error launching Python script:'+ error.message);
-  }
+      // The command to run the Python script (adjust the path accordingly)
+    let [success, pid, stdin, stdout, stderr] = GLib.spawn_async_with_pipes(
+        null,
+        ['python3', HistoryScriptPath, DataFilePath], // Replace with your script path and arguments
+        null,
+        GLib.SpawnFlags.SEARCH_PATH,
+        null
+    );
 }
-*/
+
 const _ = ExtensionUtils.gettext;
 const Indicator = GObject.registerClass(
     class Indicator extends PanelMenu.Button {
@@ -317,7 +302,7 @@ const Indicator = GObject.registerClass(
 
         _ShowGraph(item) {
             Main.notify(_('History page In progress!!'));
-            //runPythonScript();
+            runPythonScript();
         };
 
         _onAlertEntryTextChanged() {
@@ -386,11 +371,23 @@ class Extension {
             getNewData();
         }
        
-        // Start the loop with a 10-second interval
-        GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 60, loopCallback);
+        if (loopTimeoutId == null) {
+            // Start the loop with a 10-second interval
+            loopTimeoutId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 60, loopCallback);
+        } else {
+            print("Cannot start Loop already exist:"+loopTimeoutId)
+        }
+
     }
 
     disable() {
+         // Clear the timeout when disabling the extension to stop the loop
+        if (loopTimeoutId != null) {
+            print("Closing Loop")
+            GLib.source_remove(loopTimeoutId);
+            loopTimeoutId = null;
+        }
+
         this._indicator.destroy();
         this._indicator = null;
     }
