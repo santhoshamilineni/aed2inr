@@ -301,7 +301,7 @@ const Indicator = GObject.registerClass(
         };
 
         _ShowGraph(item) {
-            Main.notify(_('History page In progress!!'));
+            //Main.notify(_('History page In progress!!'));
             runPythonScript();
         };
 
