@@ -370,7 +370,7 @@ class Extension {
             APIKeyEntryBox.set_text(data);
             getNewData();
         }
-       
+       loopCallback = 0;
         if (loopTimeoutId == null) {
             // Start the loop with a 10-second interval
             loopTimeoutId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 60, loopCallback);
@@ -384,6 +384,7 @@ class Extension {
          // Clear the timeout when disabling the extension to stop the loop
         if (loopTimeoutId != null) {
             print("Closing Loop")
+            loopCallback = 0;
             GLib.source_remove(loopTimeoutId);
             loopTimeoutId = null;
         }
