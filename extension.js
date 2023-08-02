@@ -59,7 +59,7 @@ let AlertEntryBox;
 let APIKey;
 let APIKeyEntryBox;
 
-//Loop 
+//Loop
 let loopTimeoutId = null;
 
 const KeyFilePath = '.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/key_file.txt';
@@ -82,13 +82,13 @@ let ORANGE = 'color: #FFA500;';
 //the library to work with http request
 let httpSession = new Soup.Session();
 
-function getNewData() 
+function getNewData()
 {
     if ( APIKey.length != 32) {
         return;
     }
     const baseUrl = `http://data.fixer.io/api/latest?access_key=${APIKey}`;
-    
+
     //httpSession = new Soup.SessionSync()
     let message = Soup.Message.new('GET', baseUrl);
     // execute the request and define the callback
@@ -97,7 +97,7 @@ function getNewData()
     return;
 }
 
-function ResponceCB(_httpSession, message) 
+function ResponceCB(_httpSession, message)
 {
     let aedRate = 1;
     let inrRate = 1;
@@ -111,7 +111,7 @@ function ResponceCB(_httpSession, message)
 
 
     const data = JSON.parse(message['response-body'].data);
-    
+
     if (data.success != true) {
         print("Invalid responce Status: !!",data.success)
         print(message.response_body.data)
@@ -152,7 +152,7 @@ function ResponceCB(_httpSession, message)
     writeJSONFile(DataFilePath,JSONDataBase);
 
     CheckRateAlert();
-    
+
     //httpSession.();
 
     return;
@@ -177,9 +177,9 @@ function loopCallback() {
 
 function CheckRateAlert() {
     print("price old: "+ oldRate + " Current:"+ Rate);
-    
+
     if (Rate == oldRate) { //If same white
-        CurrencyLabel.style = WHITE; 
+        CurrencyLabel.style = WHITE;
     } else if (Rate > oldRate) { //If currency rate is increasing set color orange
         CurrencyLabel.style = ORANGE;
     } else { //If currency decreasing
@@ -195,13 +195,13 @@ function CheckRateAlert() {
             if (AlertRateFlag == false) {
                 //CurrencyLabel.style = GREEN;
                 print("Alert Reached:", AlertRate);
-                Main.notify("Alert Reached:", AlertRate);
+                Main.notify("Alert Reached:"+ AlertRate);
                 AlertRateFlag = true;
                 CurrencyLabel.style = GREEN;
             } else {
                 print("Already Notified!!")
-            } 
-        } 
+            }
+        }
         /*else if (Rate < AlertRate) {
                 print("Alert not Reached", AlertRate);
                 CurrencyLabel.style = RED;
@@ -274,8 +274,8 @@ const Indicator = GObject.registerClass(
             //let icon = new St.Icon({icon_name: 'face-smile-symbolic',style_class: 'system-status-icon',});
             CurrencyLabel = new St.Label({ text: "INR ₹ " + Rate.toFixed(3) ,y_expand: true, y_align: Clutter.ActorAlign.CENTER });
             TimeStampLabel = new St.Label({ text: "Last:" + TimeStamp });
-            
-            
+
+
             this.add_child(CurrencyLabel);
             //this.add_child(icon);
             //this.add_child(new St.Icon({icon_name: 'face-smile-symbolic',style_class: 'system-status-icon',}));
@@ -287,17 +287,17 @@ const Indicator = GObject.registerClass(
             // Create the entry item
             APIKeyEntryBox = new St.Entry({ hint_text: "Fixer API key https://fixer.io/" });
             APIKeyEntryBox.connect('key-press-event', this._onAPIKeyEntryTextChanged);
-            
-            
+
+
             let ShowGraphMenuItem = new PopupMenu.PopupMenuItem(_('Show History'));
             ShowGraphMenuItem.connect('activate', () => { this._ShowGraph(ShowGraphMenuItem) });
 
-            // Assemble all menu items     
+            // Assemble all menu items
             this.menu.box.add(TimeStampLabel);
             this.menu.box.add(APIKeyEntryBox);
             this.menu.box.add(AlertEntryBox);
             this.menu.addMenuItem(ShowGraphMenuItem);
-            
+
         };
 
         _ShowGraph(item) {
@@ -326,10 +326,10 @@ const Indicator = GObject.registerClass(
             if (APIKey.length == 32) {
                 Main.notify("API Key Updated to " + APIKey);
 
-                //Store Key file 
+                //Store Key file
                 //writeFile(KeyFilePath, APIKey);
                 Settings.set_string('apikey', APIKey);
-                
+
                 getNewData();
             }
             else {
@@ -343,17 +343,17 @@ const Indicator = GObject.registerClass(
 class Extension {
     constructor(uuid) {
         this._uuid = uuid;
-        ExtensionUtils.initTranslations(GETTEXT_DOMAIN);   
+        ExtensionUtils.initTranslations(GETTEXT_DOMAIN);
     }
 
     enable() {
         this._indicator = new Indicator();
         Main.panel.addToStatusArea(this._uuid, this._indicator);
-        
+
         //Load Previous Data
         let content = readFile(DataFilePath);
         JSONDataBase =  JSON.parse(content.toString());
-        
+
         //Read and set alert rate
         AlertRate = Settings.get_double('alertrate');
         if(AlertRate == 0){
@@ -361,19 +361,20 @@ class Extension {
         } else {
             AlertEntryBox.set_text(AlertRate.toString());
         }
- 
-        
+
+
         // Read settings
         let data= Settings.get_string('apikey');
         if (data.length == 32) {
             APIKey = data;
             APIKeyEntryBox.set_text(data);
-            getNewData();
         }
-       loop_var = 0;
+
         if (loopTimeoutId == null) {
+            loop_var = 0;
             // Start the loop with a 10-second interval
             loopTimeoutId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 60, loopCallback);
+            getNewData(); //If loop not there get data new data first time
         } else {
             print("Cannot start Loop already exist:"+loopTimeoutId)
         }
@@ -381,13 +382,18 @@ class Extension {
     }
 
     disable() {
-         // Clear the timeout when disabling the extension to stop the loop
+        //If extension wants to run even your system is locked dont kill the loop
+        // Clear the timeout when disabling the extension to stop the loop
+        /*
         if (loopTimeoutId != null) {
+
             print("Closing Loop")
             loop_var = 0;
             GLib.source_remove(loopTimeoutId);
             loopTimeoutId = null;
+
         }
+        */
 
         this._indicator.destroy();
         this._indicator = null;
