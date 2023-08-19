@@ -1,4 +1,4 @@
-# aed2inr-santhoshamilineni.extension
+# aed2inr@santhoshamilineni.extension
 This extension monitor the current exchange rate 1 AED to INR.
 Note: This is exchange rate shows you approximate conversion rate if you covert it now which is less than current market rate around 0.15 pisa
 
