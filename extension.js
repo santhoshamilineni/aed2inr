@@ -17,9 +17,6 @@
  */
 
 /* exported init */
-
-const GETTEXT_DOMAIN = 'my-indicator-extension';
-
 const { GObject, St, GLib,Gio } = imports.gi;
 
 const Main = imports.ui.main;
@@ -28,15 +25,11 @@ const PopupMenu = imports.ui.popupMenu;
 const Lang = imports.lang;
 const Soup = imports.gi.Soup;
 const ExtensionUtils = imports.misc.extensionUtils;
-
-
-/* Import Clutter because is the library that allow you to layout UI elements */
 const Clutter = imports.gi.Clutter;
-var glib = imports.gi.GLib;
 
 
 const Me = ExtensionUtils.getCurrentExtension();
-const SCHEMA_NAME = 'org.gnome.shell.extensions.aed2inr-santhoshamilineni.gschema.xml';
+const SCHEMA_NAME = 'org.gnome.shell.extensions.aed2inr';
 
 // Retrieve GSettings
 let Settings = ExtensionUtils.getSettings(SCHEMA_NAME);
@@ -55,16 +48,14 @@ let TimeStampLabel;
 let AlertRate;
 let AlertEntryBox;
 
-//let APIKey = "650c2bb9e1dfcd6282964e08c5231113";
-let APIKey;
+let APIKey = "Null";
 let APIKeyEntryBox;
 
 //Loop
 let loopTimeoutId = null;
 
-const KeyFilePath = '.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/key_file.txt';
-const DataFilePath = '.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/data_file.json';
-const HistoryScriptPath= '.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/history.py';
+const DataFilePath = '.local/share/gnome-shell/extensions/aed2inr@santhoshamilineni.extension/data_file.json';
+const HistoryScriptPath= '.local/share/gnome-shell/extensions/aed2inr@santhoshamilineni.extension/history.py';
 
 let DataJSONFile;
 let JSONDataBase;
@@ -79,11 +70,13 @@ let ORANGE = 'color: #FFA500;';
 
 
 
-//the library to work with http request
-let httpSession = new Soup.Session();
+
 
 function getNewData()
 {
+    //the library to work with http request
+    let httpSession = new Soup.Session();
+    
     if ( APIKey.length != 32) {
         return;
     }
@@ -343,7 +336,7 @@ const Indicator = GObject.registerClass(
 class Extension {
     constructor(uuid) {
         this._uuid = uuid;
-        ExtensionUtils.initTranslations(GETTEXT_DOMAIN);
+        ExtensionUtils.initTranslations(uuid);
     }
 
     enable() {

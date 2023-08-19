@@ -1,5 +1,6 @@
 <schemalist>
-<schema id="org.gnome.shell.extensions.aed2inr-santhoshamilineni.gschema.xml" path="/~/.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/" gettext-domain="aed2inr@santhoshamilineni.extension">
+<schema id="org.gnome.shell.extensions.aed2inr" 
+        path="/org/gnome/shell/extensions/aed2inr/" >
     <key name="apikey" type="s">
       <default>""</default>
       <summary>APIKey</summary>
