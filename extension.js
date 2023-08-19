@@ -28,10 +28,10 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Clutter = imports.gi.Clutter;
 
 
-const Me = ExtensionUtils.getCurrentExtension();
-const SCHEMA_NAME = 'org.gnome.shell.extensions.aed2inr';
+
 
 // Retrieve GSettings
+const SCHEMA_NAME = 'org.gnome.shell.extensions.aed2inr';
 let Settings = ExtensionUtils.getSettings(SCHEMA_NAME);
 
 let panelButton;
@@ -45,7 +45,7 @@ let CurrencyLabel;
 let TimeStamp;
 let TimeStampLabel;
 
-let AlertRate;
+let AlertRate = 0;
 let AlertEntryBox;
 
 let APIKey = "Null";
@@ -86,7 +86,7 @@ function getNewData()
     let message = Soup.Message.new('GET', baseUrl);
     // execute the request and define the callback
     httpSession.queue_message(message, Lang.bind(this,ResponceCB));
-    print("Http Requested")
+    console.log("Http Requested")
     return;
 }
 
@@ -94,11 +94,11 @@ function ResponceCB(_httpSession, message)
 {
     let aedRate = 1;
     let inrRate = 1;
-    print(`Responce CB ${message.status_code}`);
+    console.log("Responce CB:",message.status_code);
     /*
     if (message.status_code !== 201) {
-        print("Invalid responce!!")
-        print(message.response_body.data)
+        console.log("Invalid responce!!")
+        console.log(message.response_body.data)
         return;
     };*/
 
@@ -106,16 +106,16 @@ function ResponceCB(_httpSession, message)
     const data = JSON.parse(message['response-body'].data);
 
     if (data.success != true) {
-        print("Invalid responce Status: !!",data.success)
-        print(message.response_body.data)
+        console.log("Invalid responce Status: !!",data.success)
+        console.log(message.response_body.data)
         return;
     };
 
     // Extract AED rate, INR rate, and timestamp from the JSON data
     aedRate = data.rates.AED;
     inrRate = data.rates.INR;
-    print(`AED rate: ${aedRate}`);
-    print(`INR rate: ${inrRate}`);
+    console.log(`AED rate: ${aedRate}`);
+    console.log(`INR rate: ${inrRate}`);
 
     var unixTimestamp = data.timestamp;
 
@@ -124,16 +124,16 @@ function ResponceCB(_httpSession, message)
     var date = new Date(unixTimestamp * 1000);
 
     // Generate date string
-    print(date.toLocaleDateString("en-GB") + " " + date.toLocaleTimeString("default")); // Prints: 1:10:34 PM
+    console.log(date.toLocaleDateString("en-GB") + " " + date.toLocaleTimeString("default")); // Prints: 1:10:34 PM
     TimeStamp = date.toLocaleDateString("en-GB") + " " + date.toLocaleTimeString("default");
 
-    print("Got Out from call:", aedRate, inrRate);
+    console.log("Got Out from call:", aedRate, inrRate);
 
 
     //const gmtPlus5Time = convertToGMTPlus4(timestamp);
-    //print(`Timestamp ${timestamp} in GMT+05:00 is: ${gmtPlus4Time}`);
+    //console.log(`Timestamp ${timestamp} in GMT+05:00 is: ${gmtPlus4Time}`);
     const oneAed = inrRate / aedRate - 0.16;
-    print(`1 AED is equal to INR ${oneAed.toFixed(2)}`);
+    console.log(`1 AED is equal to INR ${oneAed.toFixed(2)}`);
     Rate = oneAed;
 
     CurrencyLabel.set_text("INR ₹" + Rate.toFixed(3));
@@ -145,9 +145,6 @@ function ResponceCB(_httpSession, message)
     writeJSONFile(DataFilePath,JSONDataBase);
 
     CheckRateAlert();
-
-    //httpSession.();
-
     return;
 }
 
@@ -156,20 +153,20 @@ function loopCallback() {
     loop_var = loop_var + 1;
     //Rate = GetExchangeRate()
     if (loop_var > 60) {
-        print("Getting New Data")
+        console.log("Getting New Data")
         getNewData();
         loop_var = 0;
         //Main.notify("Currency Updated");
     }
 
-    print('Loop executed at: ' + new Date() + loop_var);
+    console.log('Loop executed at: ' + new Date() + loop_var);
 
     // Return true to continue the loop or false to stop it
     return true;
 }
 
 function CheckRateAlert() {
-    print("price old: "+ oldRate + " Current:"+ Rate);
+    console.log("price old: "+ oldRate + " Current:"+ Rate);
 
     if (Rate == oldRate) { //If same white
         CurrencyLabel.style = WHITE;
@@ -187,22 +184,22 @@ function CheckRateAlert() {
         if (Rate >= AlertRate) {
             if (AlertRateFlag == false) {
                 //CurrencyLabel.style = GREEN;
-                print("Alert Reached:", AlertRate);
+                console.log("Alert Reached:", AlertRate);
                 Main.notify("Alert Reached:"+ AlertRate);
                 AlertRateFlag = true;
                 CurrencyLabel.style = GREEN;
             } else {
-                print("Already Notified!!")
+                console.log("Already Notified!!")
             }
         }
         /*else if (Rate < AlertRate) {
-                print("Alert not Reached", AlertRate);
+                console.log("Alert not Reached", AlertRate);
                 CurrencyLabel.style = RED;
                 AlertRateFlag = false;
         }*/
     }
     else {
-        print("Alert Rate not set:")
+        console.log("Alert Rate not set:")
         //CurrencyLabel.style = WHITE;
         AlertRateFlag = false;
     }
@@ -214,7 +211,7 @@ function writeFile(filePath, data) {
     var FileStream = file.replace(null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null);
 
     var DataStream = FileStream.write(data,null);
-    print(DataStream)
+    console.log(DataStream)
     FileStream.close(null);
 }
 
@@ -223,7 +220,7 @@ function writeJSONFile(filePath, data) {
     var FileStream = file.replace(null, false, Gio.FileCreateFlags.REPLACE_DESTINATION, null);
 
     var DataStream = FileStream.write(JSON.stringify(data, null, 2),null);
-    print(DataStream)
+    console.log(DataStream)
     FileStream.close(null);
 }
 
@@ -233,8 +230,8 @@ function readFile(filePath) {
     let stream = file.open_readwrite(null).get_input_stream();
     let data = stream.read_bytes(size, null).get_data();
     stream.close(null);
-    //print(typeof data)
-    //print(data)
+    //console.log(typeof data)
+    //console.log(data)
     let byteArray = new Uint8Array(data);
     let textDecoder = new TextDecoder();
     let fileContent = textDecoder.decode(byteArray);
@@ -262,7 +259,7 @@ const _ = ExtensionUtils.gettext;
 const Indicator = GObject.registerClass(
     class Indicator extends PanelMenu.Button {
         _init() {
-            super._init(0.0, _('My Shiny Indicator'));
+            super._init(0.0, _('AED2INR Conversion Rate Indicator'));
 
             //let icon = new St.Icon({icon_name: 'face-smile-symbolic',style_class: 'system-status-icon',});
             CurrencyLabel = new St.Label({ text: "INR ₹ " + Rate.toFixed(3) ,y_expand: true, y_align: Clutter.ActorAlign.CENTER });
@@ -294,14 +291,13 @@ const Indicator = GObject.registerClass(
         };
 
         _ShowGraph(item) {
-            //Main.notify(_('History page In progress!!'));
             runPythonScript();
         };
 
         _onAlertEntryTextChanged() {
             // This callback will be executed when the entry text is changed
             let text = AlertEntryBox.get_text();
-            print(`Entry text changed: ${text}`);
+            console.log(`Entry text changed: ${text}`);
             AlertRate = Number(text);
 
             //Save Alert Rate setting
@@ -314,7 +310,7 @@ const Indicator = GObject.registerClass(
         _onAPIKeyEntryTextChanged() {
             // This callback will be executed when the entry text is changed
             const text = APIKeyEntryBox.get_text();
-            print(`API Entry text changed: ${text}`);
+            console.log(`API Entry text changed: ${text}`);
             APIKey = text;
             if (APIKey.length == 32) {
                 Main.notify("API Key Updated to " + APIKey);
@@ -350,7 +346,7 @@ class Extension {
         //Read and set alert rate
         AlertRate = Settings.get_double('alertrate');
         if(AlertRate == 0){
-            APIKeyEntryBox.set_text("Fixer API key https://fixer.io/" );
+            APIKeyEntryBox.set_text('Set Alert Rate ex: 22.40' );
         } else {
             AlertEntryBox.set_text(AlertRate.toString());
         }
@@ -369,7 +365,7 @@ class Extension {
             loopTimeoutId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 60, loopCallback);
             getNewData(); //If loop not there get data new data first time
         } else {
-            print("Cannot start Loop already exist:"+loopTimeoutId)
+            console.log("Cannot start Loop already exist:"+loopTimeoutId)
         }
 
     }
@@ -377,16 +373,14 @@ class Extension {
     disable() {
         //If extension wants to run even your system is locked dont kill the loop
         // Clear the timeout when disabling the extension to stop the loop
-        /*
         if (loopTimeoutId != null) {
 
-            print("Closing Loop")
+            console.log("Closing Loop")
             loop_var = 0;
             GLib.source_remove(loopTimeoutId);
             loopTimeoutId = null;
 
         }
-        */
 
         this._indicator.destroy();
         this._indicator = null;
