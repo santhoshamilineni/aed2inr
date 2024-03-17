@@ -1,6 +1,5 @@
 <schemalist>
-<schema id="org.gnome.shell.extensions.aed2inr" 
-        path="/org/gnome/shell/extensions/aed2inr/" >
+<schema id="org.gnome.shell.extensions.aed2inr-santhoshamilineni.gschema.xml" path="/~/.local/share/gnome-shell/extensions/aed2inr-santhoshamilineni.extension/" gettext-domain="aed2inr@santhoshamilineni.extension">
     <key name="apikey" type="s">
       <default>""</default>
       <summary>APIKey</summary>
@@ -10,6 +9,16 @@
       <default>0</default>
       <summary>AlertRate</summary>
       <description>AlertRate Setting</description>
+    </key>
+    <key name="currencyfrom" type="s">
+      <default>""</default>
+      <summary>Currency From</summary>
+      <description>Currency From Setting</description>
+    </key>
+    <key name="currencyto" type="s">
+      <default>""</default>
+      <summary>Currency To</summary>
+      <description>Currency To Setting</description>
     </key>
   </schema>
 </schemalist>
