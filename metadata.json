@@ -1,12 +1,11 @@
 {
   "name": "AED2INR",
   "description": "Shows you current exchange rate from 1 AED to INR, it will refresh every hour",
-  "gettext-domain": "aed2inr@santhoshamilineni.extension",
   "uuid": "aed2inr@santhoshamilineni.extension",
   "shell-version": [
-    "42"
+    "46"
   ],
-  "url": "https://github.com/santhoshamilineni/aed2inr",
+  "url": "https://github.com/santhoshamilineni/aed2inr-santhoshamilineni.extension",
   "version": 2.0,
   "author": "Santhosh Amilineni",
   "email": "santhoshamilineni@gmail.com",

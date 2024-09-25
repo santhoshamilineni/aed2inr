@@ -58,7 +58,7 @@ parser.add_argument('JSONFilePath', type=str, help='JSON Data File path')
 args= parser.parse_args()
 
 # Access the parsed argument
-FilePath = args.JSONFilePath 
+FilePath = args.JSONFilePath
 
 
 # Read JSON data from file
